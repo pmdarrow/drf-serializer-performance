@@ -1,10 +1,21 @@
 import requests
 import time
 
+base_url = 'http://localhost:8000'
+
+# people = [requests.post(base_url + '/people/', json={
+#     'first_name': 'Test',
+#     'last_name': 'User'
+# }).json() for i in range(500)]
+people = requests.get(base_url + '/people/').json()[:500]
 
 contracts = [{
     'name': 'Test contract',
+    'type': 'j',
     'date': '2016-01-01T12:00',
+    'authors': [
+        p['url']
+    ],
     'premium': {
         'value': 123567.89,
         'currency': 'usd',
@@ -21,7 +32,7 @@ contracts = [{
         'value': 123567.89,
         'currency': 'usd',
     }
-} for i in range(500)]
+} for p in people]
 
 portfolio = {'contracts': contracts}
 
@@ -31,4 +42,4 @@ elapsed = time.time() - start
 
 print('Total time to POST portfolio: {:.2f}s'.format(elapsed))
 print('Status code:', r.status_code)
-print('Body:', str(r.json())[:500], '...')
+print('Body:', str(r.json())[:1000], '...')

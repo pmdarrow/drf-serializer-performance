@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Contract, Portfolio, CURRENCY_CHOICES
+from .models import Contract, Portfolio, Person, CURRENCY_CHOICES
 
 
 class MoneySerializer(serializers.Serializer):
@@ -11,7 +11,26 @@ class MoneySerializer(serializers.Serializer):
                                             required=False, allow_blank=True)
 
 
+class PersonSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Person
+
+
+person_cache = None
+
+
+class PersonRelatedField(serializers.HyperlinkedRelatedField):
+    def get_object(self, view_name, view_args, view_kwargs):
+        global person_cache
+        return person_cache[int(view_kwargs['pk'])]
+
+
 class ContractSerializer(serializers.HyperlinkedModelSerializer):
+    authors = PersonRelatedField(
+        many=True,
+        queryset=Person.objects.all(),
+        view_name='person-detail',
+    )
     premium = MoneySerializer()
     limit = MoneySerializer()
     franchise = MoneySerializer()
@@ -19,7 +38,16 @@ class ContractSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ('name', 'date', 'premium', 'limit', 'franchise', 'attachment')
+        fields = (
+            'name',
+            'type',
+            'date',
+            'authors',
+            'premium',
+            'limit',
+            'franchise',
+            'attachment',
+        )
 
     def create(self, validated_data):
         return Contract.objects.create(**validated_data)
@@ -33,3 +61,8 @@ class PortfolioSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         return validated_data
+
+    def to_internal_value(self, data):
+        global person_cache
+        person_cache = {p.pk: p for p in Person.objects.all()}
+        return super().to_internal_value(data)

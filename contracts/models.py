@@ -1,5 +1,18 @@
 from django.db import models
 
+CONTRACT_TYPES = (
+    ('a', 'A'),
+    ('b', 'B'),
+    ('c', 'C'),
+    ('d', 'D'),
+    ('e', 'E'),
+    ('f', 'F'),
+    ('g', 'G'),
+    ('h', 'H'),
+    ('i', 'I'),
+    ('j', 'J'),
+)
+
 CURRENCY_CHOICES = (
     ('usd', 'US Dollars'),
     ('cad', 'Canadian Dollars'),
@@ -8,7 +21,9 @@ CURRENCY_CHOICES = (
 
 class Contract(models.Model):
     name = models.CharField(max_length=200)
+    type = models.CharField(choices=CONTRACT_TYPES, max_length=10)
     date = models.DateTimeField()
+    authors = models.ManyToManyField('Person')
     premium_value = models.DecimalField(
         max_digits=10, decimal_places=2)
     premium_currency = models.CharField(
@@ -69,3 +84,8 @@ class Contract(models.Model):
 
 class Portfolio(models.Model):
     contracts = models.ManyToManyField('Contract')
+
+
+class Person(models.Model):
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
