@@ -9,8 +9,8 @@ base_url = 'http://localhost:8000'
 # }).json() for i in range(500)]
 people = requests.get(base_url + '/people/').json()[:500]
 
-contracts = [{
-    'name': 'Test contract',
+sub_contracts = [{
+    'name': 'Sub contract',
     'type': 'j',
     'date': '2016-01-01T12:00',
     'authors': [
@@ -34,7 +34,15 @@ contracts = [{
     }
 } for p in people]
 
-portfolio = {'contracts': contracts}
+contract = {
+    'name': 'Master contract',
+    'sub_contracts': sub_contracts,
+}
+
+portfolio = {
+    'name': 'Main portfolio',
+    'contracts': [contract],
+}
 
 start = time.time()
 r = requests.post('http://localhost:8000/portfolios/', json=portfolio)

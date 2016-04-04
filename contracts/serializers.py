@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Contract, Portfolio, Person, CURRENCY_CHOICES
+from .models import Contract, Portfolio, Person, CURRENCY_CHOICES, CONTRACT_TYPES
 
 
 class MoneySerializer(serializers.Serializer):
@@ -25,7 +25,10 @@ class PersonRelatedField(serializers.HyperlinkedRelatedField):
         return person_cache[int(view_kwargs['pk'])]
 
 
-class ContractSerializer(serializers.HyperlinkedModelSerializer):
+class SubContractSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=200)
+    type = serializers.ChoiceField(choices=CONTRACT_TYPES)
+    date = serializers.DateTimeField()
     authors = PersonRelatedField(
         many=True,
         queryset=Person.objects.all(),
@@ -36,28 +39,15 @@ class ContractSerializer(serializers.HyperlinkedModelSerializer):
     franchise = MoneySerializer()
     attachment = MoneySerializer()
 
-    class Meta:
-        model = Contract
-        fields = (
-            'name',
-            'type',
-            'date',
-            'authors',
-            'premium',
-            'limit',
-            'franchise',
-            'attachment',
-        )
 
-    def create(self, validated_data):
-        return Contract.objects.create(**validated_data)
+class ContractSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=200)
+    sub_contracts = SubContractSerializer(many=True)
 
 
 class PortfolioSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=200)
     contracts = ContractSerializer(many=True)
-
-    class Meta:
-        model = Portfolio
 
     def create(self, validated_data):
         return validated_data
