@@ -1,5 +1,24 @@
 from rest_framework import serializers
-from .models import Contract, Portfolio, Person, CURRENCY_CHOICES, CONTRACT_TYPES
+from .models import Person
+
+
+CONTRACT_TYPES = (
+    ('a', 'A'),
+    ('b', 'B'),
+    ('c', 'C'),
+    ('d', 'D'),
+    ('e', 'E'),
+    ('f', 'F'),
+    ('g', 'G'),
+    ('h', 'H'),
+    ('i', 'I'),
+    ('j', 'J'),
+)
+
+CURRENCY_CHOICES = (
+    ('usd', 'US Dollars'),
+    ('cad', 'Canadian Dollars'),
+)
 
 
 class MoneySerializer(serializers.Serializer):

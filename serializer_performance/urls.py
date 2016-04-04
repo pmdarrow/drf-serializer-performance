@@ -1,11 +1,10 @@
 from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
-from contracts.views import ContractViewSet, PortfolioViewSet, PersonViewSet
+from contracts.views import PortfolioViewSet, PersonViewSet
 
 router = routers.DefaultRouter()
-router.register(r'contracts', ContractViewSet)
-router.register(r'portfolios', PortfolioViewSet)
+router.register(r'portfolios', PortfolioViewSet, base_name='portfolios')
 router.register(r'people', PersonViewSet)
 
 urlpatterns = [

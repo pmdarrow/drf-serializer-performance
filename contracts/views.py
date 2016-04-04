@@ -1,15 +1,9 @@
-from rest_framework import viewsets
-from .models import Contract, Portfolio, Person
-from .serializers import ContractSerializer, PortfolioSerializer, PersonSerializer
+from rest_framework import viewsets, mixins
+from .models import Person
+from .serializers import PortfolioSerializer, PersonSerializer
 
 
-class ContractViewSet(viewsets.ModelViewSet):
-    queryset = Contract.objects.all()
-    serializer_class = ContractSerializer
-
-
-class PortfolioViewSet(viewsets.ModelViewSet):
-    queryset = Portfolio.objects.all()
+class PortfolioViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = PortfolioSerializer
 
 
